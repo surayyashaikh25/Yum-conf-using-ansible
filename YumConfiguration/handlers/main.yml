@@ -1,0 +1,6 @@
+---
+# handlers file for YumConfiguration
+- name: web_restart
+  service:
+          name: "{{ installing_sw }}"
+          state: restarted

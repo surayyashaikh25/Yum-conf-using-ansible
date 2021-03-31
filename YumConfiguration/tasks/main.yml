@@ -1,0 +1,43 @@
+---
+# tasks file for YumConfiguration
+- name: "Creating Directory"
+  file:
+      state: directory
+      path: "{{ mounting_path }}"
+
+- name: "Mounting /dev/cdrom to /dvd"
+  mount:
+      src: "{{ dvd_iso }}"
+      path: "{{ mounting_path }}"
+      state: mounted
+      fstype: "iso9660"
+
+- name: "AppStream"
+  yum_repository:
+      name: "appstream"
+      baseurl: "{{ app_loc }}"
+      description: "Repo for AppStream"
+      gpgcheck: no
+      
+- name: "BaseOS"
+  yum_repository:
+      name: "baseOS"
+      baseurl: "{{ base_loc }}"
+      description: "Repo for BaseOS"
+      gpgcheck: no
+
+- name: "Installing HTTPD"
+  package:
+      name: "{{ installing_sw }}"
+      state: present
+
+- name: "Copying Contents"
+  template:
+      src: "index.html"
+      dest: "/var/www/html/index.html"
+  notify: "web_restart"
+
+- name: "Starting httpd services"
+  service:
+      name:  "{{ installing_sw }}"
+      state: started
